@@ -64,17 +64,17 @@ class WC_GiftCard_Product {
         ?>
         <div class="giftcard-recipient-field" style="margin-bottom:15px;">
             <label for="giftcard_recipient_email">
-                <?php esc_html_e( 'Recipient Email (optional)', 'mi-giftcard' ); ?>
+                <?php esc_html_e( 'E-mailadres van de ontvanger (optioneel)', 'mi-giftcard' ); ?>
             </label>
             <input
                 type="email"
                 id="giftcard_recipient_email"
                 name="giftcard_recipient_email"
-                placeholder="<?php esc_attr_e( 'Leave blank to use for yourself', 'mi-giftcard' ); ?>"
+                placeholder="<?php esc_attr_e( 'email@domain.com', 'mi-giftcard' ); ?>"
                 style="width:100%; margin-top:5px;"
             />
             <small style="color:#777;">
-                <?php esc_html_e( 'If provided, the coupon will only be usable by that email address and will be sent to both you and the recipient.', 'mi-giftcard' ); ?>
+                <?php esc_html_e( 'Indien opgegeven, is de kortingsbon alleen geldig voor dat e-mailadres en wordt deze zowel naar u als naar de ontvanger verzonden.', 'mi-giftcard' ); ?>
             </small>
         </div>
         <?php

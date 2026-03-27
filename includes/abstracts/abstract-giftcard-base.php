@@ -35,6 +35,11 @@ abstract class WC_GiftCard_Base {
     /** Prevents duplicate coupon generation on an order */
     const META_ORDER_PROCESSED = '_giftcard_processed';
 
+    /** Balance tracking meta keys (defined in WC_GiftCard_Coupon & WC_GiftCard_Balance) */
+    // const META_INITIAL_AMOUNT = '_giftcard_initial_amount';
+    // const META_CURRENT_BALANCE = '_giftcard_current_balance';
+    // const META_TRANSACTION_HISTORY = '_giftcard_transaction_history';
+
     // =========================================================================
     // Shared helpers
     // =========================================================================

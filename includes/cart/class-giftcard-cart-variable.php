@@ -173,7 +173,7 @@ class WC_GiftCard_Cart_Variable extends WC_GiftCard_Base {
         $label = $cart_item[ self::META_VARIATION_LABEL ] ?? '';
 
         $item_data[] = [
-            'key'   => __( 'Gift Card Value', 'wc-giftcard' ),
+            'key'   => __( 'Bedrag van de cadeaukaart', 'wc-giftcard' ),
             'value' => wc_price( $cart_item[ self::META_RESOLVED_PRICE ] )
                        . ( $label ? ' <small>(' . esc_html( $label ) . ')</small>' : '' ),
         ];

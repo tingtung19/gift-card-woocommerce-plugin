@@ -56,7 +56,7 @@ final class WC_GiftCard_Plugin {
 
     /**
      * Require all plugin class files.
-     * Load order: abstract base -> admin -> frontend -> cart -> coupon -> email -> order.
+     * Load order: abstract base -> admin -> frontend -> cart -> coupon -> balance -> email -> order -> checkout -> dashboard.
      */
     private function load_files(): void {
         // Abstract base (must load first -- all classes extend it)
@@ -79,11 +79,20 @@ final class WC_GiftCard_Plugin {
         // Coupon
         require_once WC_GIFTCARD_PATH . 'includes/coupon/class-giftcard-coupon.php';
 
+        // Balance
+        require_once WC_GIFTCARD_PATH . 'includes/balance/class-giftcard-balance.php';
+
         // Email
         require_once WC_GIFTCARD_PATH . 'includes/email/class-giftcard-email.php';
 
         // Order
         require_once WC_GIFTCARD_PATH . 'includes/order/class-giftcard-order.php';
+
+        // Checkout (balance validation & deduction)
+        require_once WC_GIFTCARD_PATH . 'includes/checkout/class-giftcard-checkout.php';
+
+        // Dashboard (customer my account)
+        require_once WC_GIFTCARD_PATH . 'includes/dashboard/class-giftcard-customer-dashboard.php';
     }
 
     // =========================================================================
@@ -109,8 +118,12 @@ final class WC_GiftCard_Plugin {
         new WC_GiftCard_Cart_Simple();
         new WC_GiftCard_Cart_Variable();
 
-        // Order
+        // Order & Checkout
         new WC_GiftCard_Order();
+        new WC_GiftCard_Checkout();
+
+        // Customer Dashboard
+        new WC_GiftCard_Customer_Dashboard();
     }
 }
 

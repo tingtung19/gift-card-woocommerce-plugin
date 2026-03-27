@@ -35,19 +35,19 @@ class WC_GiftCard_Frontend_Recipient extends WC_GiftCard_Base {
 
             <label for="giftcard_recipient_email"
                    style="font-weight:600; display:block; margin-bottom:5px;">
-                <?php esc_html_e( 'Recipient Email (optional)', 'wc-giftcard' ); ?>
+                <?php esc_html_e( 'E-mailadres van de ontvanger (optioneel)', 'wc-giftcard' ); ?>
             </label>
 
             <input
                 type="email"
                 id="giftcard_recipient_email"
                 name="giftcard_recipient_email"
-                placeholder="<?php esc_attr_e( 'Leave blank to use for yourself', 'wc-giftcard' ); ?>"
+                placeholder="<?php esc_attr_e( 'email@domain.com', 'wc-giftcard' ); ?>"
                 style="width:100%; padding:9px 12px; border:2px solid #ccc; border-radius:6px; font-size:14px;"
             />
 
             <small style="color:#777; margin-top:4px; display:block;">
-                <?php esc_html_e( 'If provided, the coupon will only be usable by that email address and will be sent to both you and the recipient.', 'wc-giftcard' ); ?>
+                <?php esc_html_e( 'Indien opgegeven, is de kortingsbon alleen geldig voor dat e-mailadres en wordt deze zowel naar u als naar de ontvanger verzonden.', 'wc-giftcard' ); ?>
             </small>
 
         </div>

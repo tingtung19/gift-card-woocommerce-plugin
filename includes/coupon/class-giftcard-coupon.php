@@ -3,7 +3,8 @@
  * Coupon: Gift card coupon generator.
  *
  * Creates a WooCommerce coupon post for each gift card purchased.
- * The coupon is a single-use, fixed-cart discount worth the gift card amount.
+ * The coupon is reusable with balance tracking - can be used multiple times
+ * until the full amount is consumed.
  *
  * When a recipient email is provided the coupon is restricted to that email
  * via WooCommerce's built-in customer_email meta, so it will be rejected at
@@ -13,6 +14,15 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class WC_GiftCard_Coupon extends WC_GiftCard_Base {
+
+    /** Meta key for original/initial gift card amount */
+    const META_INITIAL_AMOUNT = '_giftcard_initial_amount';
+
+    /** Meta key for remaining/current balance */
+    const META_CURRENT_BALANCE = '_giftcard_current_balance';
+
+    /** Meta key for transaction history (serialized array) */
+    const META_TRANSACTION_HISTORY = '_giftcard_transaction_history';
 
     /**
      * Generate a WooCommerce coupon for a gift card purchase.
@@ -40,13 +50,13 @@ class WC_GiftCard_Coupon extends WC_GiftCard_Base {
             'post_status'  => 'publish',
             'post_type'    => 'shop_coupon',
             /* translators: %d: WooCommerce order ID */
-            'post_excerpt' => sprintf( __( 'Gift card generatmi-giftcarder #%d.', 'wc-giftcard' ), $order_id ),
+            'post_excerpt' => sprintf( __( 'Gift card generated from order #%d.', 'mi-giftcard' ), $order_id ),
         ] );
 
         if ( is_wp_error( $coupon_id ) ) {
             throw new \RuntimeException(
                 /* translators: %s: WP_Error message */
-                sprintf( __( 'Failed to create gift card coupon: %s', 'wc-giftcard' ), $coupon_id->get_error_message() )
+                sprintf( __( 'Failed to create gift card coupon: %s', 'mi-giftcard' ), $coupon_id->get_error_message() )
             );
         }
 
@@ -76,12 +86,17 @@ class WC_GiftCard_Coupon extends WC_GiftCard_Base {
      *
      * Core WooCommerce meta:
      *  - discount_type   fixed_cart discount
-     *  - coupon_amount   monetary value
-     *  - usage_limit     1  (single use)
+     *  - coupon_amount   NOT SET - we use custom balance validation instead
+     *  - usage_limit     empty (unlimited usage)
      *  - individual_use  yes (cannot be combined)
      *  - customer_email  restricted to recipient when provided
      *
-     * Custom audit meta:
+     * Custom balance tracking meta:
+     *  - _giftcard_initial_amount    Original gift card amount
+     *  - _giftcard_current_balance   Remaining balance
+     *  - _giftcard_transaction_history Array of all transactions
+     *
+     * Audit meta:
      *  - _giftcard_order_id
      *  - _giftcard_buyer_email
      *  - _giftcard_recipient
@@ -100,12 +115,16 @@ class WC_GiftCard_Coupon extends WC_GiftCard_Base {
         int     $order_id
     ): void {
 
-        // Core coupon behaviour
+        // Core coupon behaviour - reusable with no usage limit
         update_post_meta( $coupon_id, 'discount_type',  'fixed_cart' );
-        update_post_meta( $coupon_id, 'coupon_amount',  $amount );
-        update_post_meta( $coupon_id, 'usage_limit',    1 );
+        update_post_meta( $coupon_id, 'usage_limit',    '' );  // Empty = unlimited
         update_post_meta( $coupon_id, 'individual_use', 'yes' );
-        update_post_meta( $coupon_id, 'date_expires',   '' );   // No expiry by default
+        update_post_meta( $coupon_id, 'date_expires',   '' );  // No expiry by default
+
+        // Balance tracking meta - initialize balance to the purchased amount
+        update_post_meta( $coupon_id, self::META_INITIAL_AMOUNT, $amount );
+        update_post_meta( $coupon_id, self::META_CURRENT_BALANCE, $amount );
+        update_post_meta( $coupon_id, self::META_TRANSACTION_HISTORY, [] );
 
         // Restrict to recipient email if one was provided
         if ( ! empty( $recipient_email ) ) {

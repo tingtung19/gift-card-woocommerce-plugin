@@ -68,7 +68,7 @@ class WC_GiftCard_Email extends WC_GiftCard_Base {
 
     /**
      * Build the full HTML email body.
-     *mi-giftcard
+     *
      * @param string      $coupon_code     Coupon code shown prominently.
      * @param float       $amount          Coupon value in the store currency.
      * @param string      $variation_label Denomination label; empty string if not applicable.
@@ -90,9 +90,10 @@ class WC_GiftCard_Email extends WC_GiftCard_Base {
         $intro            = $this->build_intro( $shop_name, $is_buyer );
         $label_html       = $this->build_label_html( $variation_label );
         $restriction_note = $this->build_restriction_note( $recipient_email );
+        $balance_note     = $this->build_balance_note();
 
-        $label_code   = esc_html__( 'Your Coupon Code:', 'wc-giftcard' );
-        $label_redeem = esc_html__( 'Use the code above at checkout on', 'wc-giftcard' );
+        $label_code   = esc_html__( 'Your Coupon Code:', 'mi-giftcard' );
+        $label_redeem = esc_html__( 'Use the code above at checkout on', 'mi-giftcard' );
 
         return <<<HTML
         <!DOCTYPE html>
@@ -121,6 +122,8 @@ class WC_GiftCard_Email extends WC_GiftCard_Base {
                 </div>
 
                 {$restriction_note}
+
+                {$balance_note}
 
                 <p style="color:#555;">
                     {$label_redeem}
@@ -175,6 +178,22 @@ class WC_GiftCard_Email extends WC_GiftCard_Base {
 
         return '<p style="margin:4px 0 0; font-size:13px; color:#555;">'
                . esc_html( $variation_label )
+               . '</p>';
+    }
+
+    /**
+     * Build the balance tracking info paragraph.
+     *
+     * Explains that this is a reusable gift card with balance tracking.
+     *
+     * @return string HTML fragment.
+     */
+    private function build_balance_note(): string {
+        $account_url = wc_get_account_endpoint_url( 'giftcards' );
+
+        return '<p style="background:#e3f2fd; border-left:4px solid #1976d2; padding:12px; margin:15px 0; font-size:13px; color:#555;">'
+               . '💡 ' . esc_html__( 'This is a reusable gift card. You can use it multiple times until the balance is fully consumed. ', 'mi-giftcard' )
+               . ( ! empty( $account_url ) ? 'View your balance and transaction history in your <a href="' . esc_url( $account_url ) . '" style="color:#1976d2; font-weight:600;">account</a>.' : '' )
                . '</p>';
     }
 
